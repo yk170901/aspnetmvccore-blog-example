@@ -1,10 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Project.Data;
+using Project.Models.Domain;
 using Project.Models.ViewModels;
 
 namespace Project.Controllers
 {
     public class AdminTagsController : Controller
     {
+        // constructor injection for connecting to db
+        private readonly BlogDbContext _blogDbContext;
+        
+        public AdminTagsController(BlogDbContext blogDbContext)
+        {
+                _blogDbContext = blogDbContext;
+        }
+
         // AdminTags/Add
         [HttpGet]
         public IActionResult Add()
@@ -24,10 +34,19 @@ namespace Project.Controllers
             #endregion
 
             #region Method 2(Better) : Model Binding
-            
-            string name = reqValue.Name;
-            string displayName = reqValue.DisplayName;
+            // string name = reqValue.Name;
+            // string displayName = reqValue.DisplayName;
             #endregion
+
+            Tag tag = new Tag()
+            {
+                Name = reqValue.Name,
+                DisplayName = reqValue.DisplayName
+            };
+
+            // DbContext.TableName.Action(Value);
+            _blogDbContext.Tags.Add(tag);
+            _blogDbContext.SaveChanges();
 
             return View("Add");
         }
