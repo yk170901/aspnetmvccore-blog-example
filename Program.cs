@@ -1,7 +1,18 @@
+using Project.Data;
+using Pomelo.EntityFrameworkCore.MySql;
+using Microsoft.EntityFrameworkCore;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// will it work?
+builder.Services.AddDbContext<BlogDbContext>(options =>
+    options.UseMySql(builder.Configuration.GetConnectionString("BlogDbConnectionString"), new MySqlServerVersion(new Version(8,0,38)))
+);
+
 
 var app = builder.Build();
 
