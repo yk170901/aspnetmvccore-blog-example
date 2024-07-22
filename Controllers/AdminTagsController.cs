@@ -3,17 +3,25 @@ using Microsoft.EntityFrameworkCore;
 using Project.Data;
 using Project.Models.Domain;
 using Project.Models.ViewModels;
+using Project.Repositories;
 
 namespace Project.Controllers
 {
     public class AdminTagsController : Controller
     {
+        // DO NOT ACCESS DB DIRECTLY
         // constructor injection for connecting to db
-        private readonly BlogDbContext _blogDbContext;
-        
-        public AdminTagsController(BlogDbContext blogDbContext)
+        //private readonly BlogDbContext _blogDbContext;
+        //public AdminTagsController(BlogDbContext blogDbContext)
+        //{
+        //    _blogDbContext = blogDbContext;
+        //}
+
+        // USE REPOSITORY PATTERN INSTEAD
+        private readonly ITagRepository _tagRepository;
+        public AdminTagsController(ITagRepository tagRepository)
         {
-                _blogDbContext = blogDbContext;
+            _tagRepository = tagRepository;
         }
 
         #region Add
@@ -45,12 +53,13 @@ namespace Project.Controllers
                 DisplayName = reqValue.DisplayName
             };
 
-            // DbContext.TableName.Action(Value);
-            await _blogDbContext.Tags.AddAsync(tag);
-            await _blogDbContext.SaveChangesAsync();
+            // Do not directly call db. use repository pattern
+            //await _blogDbContext.Tags.AddAsync(tag);
+            //await _blogDbContext.SaveChangesAsync();
+
+            await _tagRepository.AddAsync(tag);
 
             return RedirectToAction("List"); // when the method has [ActionName("Name")] the value is Name; otherwise, the name of the method should be the value
-            //return View("Add");
         }
         #endregion
 
@@ -58,7 +67,7 @@ namespace Project.Controllers
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            List<Tag> tags = await _blogDbContext.Tags.ToListAsync();
+            IEnumerable<Tag> tags = await _tagRepository.GetAllAsync();
 
             return View(tags);
         }
@@ -66,11 +75,7 @@ namespace Project.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id) // asp-route-"id" -> "id" should be the parameter name
         {
-            // Classic
-            // _blogDbContext.Tags.Find(id);
-            
-            // LINQ (May be better)
-            Tag? tag = await _blogDbContext.Tags.FirstOrDefaultAsync<Tag>(x => x.Id == id);
+            Tag? tag = await _tagRepository.GetAsync(id);
 
             if (tag != null)
             {
@@ -100,39 +105,37 @@ namespace Project.Controllers
                 DisplayName= reqValue.DisplayName
             };
 
-            Tag? existingTag = await _blogDbContext.Tags.FindAsync(tag.Id);
+            Tag? updatedTag = await _tagRepository.UpdateAsync(tag);
 
-            // TODO : if nothing changed, popup alert instead of applying the change
-            if (existingTag != null)
+            if (updatedTag != null)
             {
-                existingTag.Name = reqValue.Name;
-                existingTag.DisplayName = reqValue.DisplayName;
-
-                await _blogDbContext.SaveChangesAsync();
-                
                 // show success notification
-                return RedirectToAction("List");
-            }
 
-            // show fail notification
-            return RedirectToAction("Edit", reqValue.Id); // back to HttpGet Edit(Guid id) page
+                // TODO: WHY
+                //return View("List"); // DOESNT WORK shows no tag when redirected
+                return RedirectToAction("List"); // WORKS
+            }
+            else
+            {
+                // show fail notification
+                return RedirectToAction("Edit", reqValue.Id); // back to HttpGet Edit(Guid id) page
+            }
         }
 
         // TODO : not httpdelete?
         [HttpPost]
         public async Task<IActionResult> Delete(EditTagRequest reqValue) // Guid id
         {
-            Tag? tag = await _blogDbContext.Tags.FindAsync(reqValue.Id);
+            Tag? tag = await _tagRepository.DeleteAsync(reqValue.Id);
 
             if(tag != null)
             {
-                _blogDbContext.Tags.Remove(tag);
-                await _blogDbContext.SaveChangesAsync();
-             
                 return RedirectToAction("List");
             }
-
-            return RedirectToAction("Edit", reqValue.Id);
+            else
+            {
+                return RedirectToAction("Edit", reqValue.Id);
+            }
         }
     }
 }
