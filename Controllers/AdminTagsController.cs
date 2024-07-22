@@ -63,7 +63,63 @@ namespace Project.Controllers
             return View(tags);
         }
 
+        [HttpGet]
+        public IActionResult Edit(Guid id) // asp-route-"id" -> "id" should be the parameter name
+        {
+            // Classic
+            // _blogDbContext.Tags.Find(id);
+            
+            // LINQ (May be better)
+            Tag? tag = _blogDbContext.Tags.FirstOrDefault(x => x.Id == id);
+
+            if (tag != null)
+            {
+                // viewmodel
+                EditTagRequest editTagRequest = new EditTagRequest()
+                {
+                    Id = tag.Id,
+                    Name = tag.Name,
+                    DisplayName = tag.DisplayName
+                };
+
+                return View(editTagRequest);
+            }
+
+            return View(null);
+        }
         #endregion
+
+        // not httpput?
+        [HttpPost]
+        public IActionResult Edit(EditTagRequest reqValue)
+        {
+            Tag tag = new Tag()
+            {
+                Id= reqValue.Id,
+                Name= reqValue.Name,
+                DisplayName= reqValue.DisplayName
+            };
+
+            Tag? existingTag = _blogDbContext.Tags.Find(tag.Id);
+
+            // TODO : if nothing changed, popup alert instead of applying the change
+            if (existingTag != null)
+            {
+                existingTag.Name = reqValue.Name;
+                existingTag.DisplayName = reqValue.DisplayName;
+            
+                _blogDbContext.SaveChanges();
+                
+                // show success notification
+                return RedirectToAction("List");
+            }
+
+            // show fail notification
+            return RedirectToAction("Edit", reqValue.Id); // back to HttpGet Edit(Guid id) page
+        }
+
+
+        // public IActionResult Delete(Guid id) { }
 
     }
 }
