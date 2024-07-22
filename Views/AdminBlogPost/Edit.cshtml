@@ -100,7 +100,9 @@
 <!-- Froala & Cloudinary -->
 @section Scripts {
     <script>
-        var editor = new FroalaEditor("#content"); // id element of Content
+        var editor = new FroalaEditor("#content", {
+            imageUploadURL: '/api/image'
+        });
 
         const featuredImageUploadElement = document.getElementById('featuredImageUpload');
         const featuredImageUrlElement = document.getElementById('featuredImageUrl');
