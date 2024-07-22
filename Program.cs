@@ -15,6 +15,7 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
 
 // add injection inside services. when someone call itagrepository, give tagrepository instead.
 builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
 
 var app = builder.Build();
 
