@@ -116,7 +116,45 @@ namespace Project.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(EditBlogPostRequest reqValue)
         {
-            return RedirectToAction("List");
+            List<Tag> tagsToAdd = new List<Tag>();
+
+            foreach (string selectedTag in reqValue.SelectedTags) {
+               if (Guid.TryParse(selectedTag, out Guid id))
+                {
+                    Tag? foundTag = await _tagRepository.GetAsync(id);
+                    if (foundTag != null)
+                    {
+                        tagsToAdd.Add(foundTag);
+                    }
+                }
+            }
+
+            BlogPost blogPost = new BlogPost()
+            {
+                Id = reqValue.Id,
+                Author = reqValue.Author,
+                Content = reqValue.Content,
+                FeaturedImageUrl = reqValue.FeaturedImageUrl,
+                Heading = reqValue.Heading,
+                UrlHandle = reqValue.UrlHandle,
+                PageTitle = reqValue.PageTitle,
+                PublishedDate = reqValue.PublishedDate,
+                ShortDescription = reqValue.ShortDescription,
+                Visible = reqValue.Visible,
+                Tags = tagsToAdd
+            };
+
+            BlogPost? updatedBlogPost = await _blogPostRepository.UpdateAsync(blogPost);
+
+            if(updatedBlogPost != null)
+            {
+                return RedirectToAction("Edit");
+                //return RedirectToAction("List");
+            }
+            else
+            {
+                return RedirectToAction("Edit");
+            }
         }
     }
 }

@@ -36,9 +36,30 @@ namespace Project.Repositories
             return await _blogDbContext.BlogPosts.Include(x => x.Tags).FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public Task<BlogPost?> UpdateAsync(BlogPost blogPost)
+        public async Task<BlogPost?> UpdateAsync(BlogPost blogPost)
         {
-            throw new NotImplementedException();
+            // when not including tags Include(x => x.Tags), an error that says 'duplicate primary key' occurs
+            //BlogPost? existingBlogPost = await _blogDbContext.BlogPosts.FirstOrDefaultAsync(x => x.Id == blogPost.Id);
+            BlogPost? existingBlogPost = await _blogDbContext.BlogPosts.Include(x => x.Tags).FirstOrDefaultAsync(x => x.Id == blogPost.Id);
+
+            if (existingBlogPost != null)
+            {
+                existingBlogPost.Author = blogPost.Author;
+                existingBlogPost.ShortDescription = blogPost.ShortDescription;
+                existingBlogPost.PublishedDate = blogPost.PublishedDate;
+                existingBlogPost.Id = blogPost.Id;
+                existingBlogPost.Visible = blogPost.Visible;
+                existingBlogPost.FeaturedImageUrl = blogPost.FeaturedImageUrl;
+                existingBlogPost.Heading = blogPost.Heading;
+                existingBlogPost.UrlHandle = blogPost.UrlHandle;
+                existingBlogPost.Tags = blogPost.Tags;
+                existingBlogPost.PageTitle = blogPost.PageTitle;
+
+                await _blogDbContext.SaveChangesAsync();
+                return existingBlogPost;
+            }
+
+            return null;
         }
     }
 }
