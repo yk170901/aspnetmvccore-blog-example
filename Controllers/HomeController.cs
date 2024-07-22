@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Project.Models;
+using Project.Models.Domain;
+using Project.Repositories;
 using System.Diagnostics;
 
 namespace Project.Controllers
@@ -7,15 +9,19 @@ namespace Project.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IBlogPostRepository _blogPostRepository;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IBlogPostRepository blogPostRepository)
         {
             _logger = logger;
+            _blogPostRepository = blogPostRepository;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            IEnumerable<BlogPost> blogPosts = await _blogPostRepository.GetAllAsync();
+
+            return View(blogPosts);
         }
 
         public IActionResult Privacy()
