@@ -76,5 +76,47 @@ namespace Project.Controllers
             return View(blogPosts);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id) // asp-route-"id"
+        {
+            BlogPost? blogPost = await _blogPostRepository.GetAsync(id);
+
+            if (blogPost != null)
+            {
+                IEnumerable<Tag> allTags = await _tagRepository.GetAllAsync();
+
+                EditBlogPostRequest model = new EditBlogPostRequest()
+                {
+                    Author = blogPost.Author,
+                    Content = blogPost.Content,
+                    FeaturedImageUrl = blogPost.FeaturedImageUrl,
+                    Heading = blogPost.Heading,
+                    Id = blogPost.Id,
+                    PageTitle = blogPost.PageTitle,
+                    PublishedDate = blogPost.PublishedDate,
+                    ShortDescription = blogPost.ShortDescription,
+                    UrlHandle = blogPost.UrlHandle,
+                    Visible = blogPost.Visible,
+                    Tags = allTags.Select(x => new SelectListItem
+                    {
+                        Text = x.Name,
+                        Value = x.Id.ToString()
+                    }),
+                    SelectedTags = blogPost.Tags.Select(x => x.Id.ToString()).ToArray()
+                };
+
+                return View(model);
+            }
+            else
+            {
+                return View(null);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditBlogPostRequest reqValue)
+        {
+            return RedirectToAction("List");
+        }
     }
 }

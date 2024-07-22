@@ -33,8 +33,7 @@ namespace Project.Repositories
 
         public async Task<BlogPost?> GetAsync(Guid id)
         {
-            BlogPost? blogPost = await _blogDbContext.BlogPosts.FirstOrDefaultAsync(x => x.Id == id);
-            throw new NotImplementedException();
+            return await _blogDbContext.BlogPosts.Include(x => x.Tags).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public Task<BlogPost?> UpdateAsync(BlogPost blogPost)
