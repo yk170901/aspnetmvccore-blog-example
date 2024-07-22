@@ -10,32 +10,40 @@
 </div>
 
 <div class="container py-5">
-    <form method="post">
-        <div class="mb-3">
-            <label class="form-label">Id</label>
-            <input type="text" class="form-control" id="id" asp-for="Id" readonly />
-                <!-- if I use "value="@Model.Id"" instead of asp-for="Id", EditTagRequest does not sync Id.
-                So EditTagRequest does not have Id value => cannot use Id in EditTagRequest in this page at all -->
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Name</label>
-            <input type="text" class="form-control" asp-for="Name" id="Name" /> <!--name="displayName" for Manually Reading Inputs in AdminTagsController -->
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Display Name</label>
-            <input type="text" class="form-control" asp-for="DisplayName" id="displayName" /> <!--name="displayName" for Manually Reading Inputs in AdminTagsController -->
-        </div>
 
-        <div class="mb-3">
-            <div class="d-flex">
-                <button type="submit" class="btn btn-outline-dark">Update</button>
-                <button type="submit" class="btn btn-danger ms-2"
-                        asp-area="" asp-controller="AdminTags" asp-action="Delete">Delete</button>
-                        <!--
-                            1. asp-controller="AdminTags"  necessary?
-                            2. cannot use asp-for? am i forced to pass editTagRequest wholely? not just a piece of them(id)? 
-                        -->
+    @if(Model == null)
+    {
+        <p>Tag not found!</p>
+    }
+    else
+    {
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Id</label>
+                <input type="text" class="form-control" id="id" asp-for="Id" readonly />
+                    <!-- if I use "value="@Model.Id"" instead of asp-for="Id", EditTagRequest does not sync Id.
+                    So EditTagRequest does not have Id value => cannot use Id in EditTagRequest in this page at all -->
             </div>
-        </div>
-    </form>
+            <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input type="text" class="form-control" asp-for="Name" id="Name" /> <!--name="displayName" for Manually Reading Inputs in AdminTagsController -->
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Display Name</label>
+                <input type="text" class="form-control" asp-for="DisplayName" id="displayName" /> <!--name="displayName" for Manually Reading Inputs in AdminTagsController -->
+            </div>
+
+            <div class="mb-3">
+                <div class="d-flex">
+                    <button type="submit" class="btn btn-outline-dark">Update</button>
+                    <button type="submit" class="btn btn-danger ms-2"
+                            asp-area="" asp-controller="AdminTags" asp-action="Delete">Delete</button>
+                            <!--
+                                1. asp-controller="AdminTags"  necessary?
+                                2. cannot use asp-for? am i forced to pass editTagRequest wholely? not just a piece of them(id)? 
+                            -->
+                </div>
+            </div>
+        </form>
+    }
 </div>

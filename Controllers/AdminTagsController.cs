@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Project.Data;
 using Project.Models.Domain;
 using Project.Models.ViewModels;
@@ -20,13 +21,12 @@ namespace Project.Controllers
         [HttpGet]
         public IActionResult Add()
         {
-            // view for adding a tag
             return View();
         }
 
         [HttpPost]
         // [ActionName("Add")] // the name is Add.cshtml; thus, Add. can use when the method name is dif from the action name
-        public IActionResult Add(AddTagRequest reqValue)
+        public async Task<IActionResult> Add(AddTagRequest reqValue)
         {
             #region Method 1 : Manual Reading Inputs
             // Request.Form[value of the property "name" of the input element]
@@ -46,8 +46,8 @@ namespace Project.Controllers
             };
 
             // DbContext.TableName.Action(Value);
-            _blogDbContext.Tags.Add(tag);
-            _blogDbContext.SaveChanges();
+            await _blogDbContext.Tags.AddAsync(tag);
+            await _blogDbContext.SaveChangesAsync();
 
             return RedirectToAction("List"); // when the method has [ActionName("Name")] the value is Name; otherwise, the name of the method should be the value
             //return View("Add");
@@ -56,21 +56,21 @@ namespace Project.Controllers
 
         #region Get
         [HttpGet]
-        public IActionResult List()
+        public async Task<IActionResult> List()
         {
-            List<Tag> tags = _blogDbContext.Tags.ToList();
+            List<Tag> tags = await _blogDbContext.Tags.ToListAsync();
 
             return View(tags);
         }
 
         [HttpGet]
-        public IActionResult Edit(Guid id) // asp-route-"id" -> "id" should be the parameter name
+        public async Task<IActionResult> Edit(Guid id) // asp-route-"id" -> "id" should be the parameter name
         {
             // Classic
             // _blogDbContext.Tags.Find(id);
             
             // LINQ (May be better)
-            Tag? tag = _blogDbContext.Tags.FirstOrDefault(x => x.Id == id);
+            Tag? tag = await _blogDbContext.Tags.FirstOrDefaultAsync<Tag>(x => x.Id == id);
 
             if (tag != null)
             {
@@ -91,7 +91,7 @@ namespace Project.Controllers
 
         // TODO: not httpput?
         [HttpPost]
-        public IActionResult Edit(EditTagRequest reqValue)
+        public async Task<IActionResult> Edit(EditTagRequest reqValue)
         {
             Tag tag = new Tag()
             {
@@ -100,15 +100,15 @@ namespace Project.Controllers
                 DisplayName= reqValue.DisplayName
             };
 
-            Tag? existingTag = _blogDbContext.Tags.Find(tag.Id);
+            Tag? existingTag = await _blogDbContext.Tags.FindAsync(tag.Id);
 
             // TODO : if nothing changed, popup alert instead of applying the change
             if (existingTag != null)
             {
                 existingTag.Name = reqValue.Name;
                 existingTag.DisplayName = reqValue.DisplayName;
-            
-                _blogDbContext.SaveChanges();
+
+                await _blogDbContext.SaveChangesAsync();
                 
                 // show success notification
                 return RedirectToAction("List");
@@ -120,14 +120,14 @@ namespace Project.Controllers
 
         // TODO : not httpdelete?
         [HttpPost]
-        public IActionResult Delete(EditTagRequest reqValue) // Guid id
+        public async Task<IActionResult> Delete(EditTagRequest reqValue) // Guid id
         {
-            Tag? tag = _blogDbContext.Tags.Find(reqValue.Id);
+            Tag? tag = await _blogDbContext.Tags.FindAsync(reqValue.Id);
 
             if(tag != null)
             {
                 _blogDbContext.Tags.Remove(tag);
-                _blogDbContext.SaveChanges();
+                await _blogDbContext.SaveChangesAsync();
              
                 return RedirectToAction("List");
             }
