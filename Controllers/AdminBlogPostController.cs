@@ -64,8 +64,7 @@ namespace Project.Controllers
 
             await _blogPostRepository.AddAsync(blogPost);
 
-            return RedirectToAction("Add");
-            //return View("Add");
+            return RedirectToAction("List");
         }
 
         [HttpGet]
