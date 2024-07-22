@@ -16,9 +16,5 @@ namespace Project.Data
         public DbSet<BlogPost> BlogPosts { get; set; }
         public DbSet<Tag> Tags { get; set; }
 
-
-        // connect tables when they have relationships
-        
-
     }
 }

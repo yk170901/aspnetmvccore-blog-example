@@ -9,3 +9,8 @@ Tried using SQL Server by Microsoft but couldn't due to unknown & unsolveable er
 
 Server: localhost
 Database: Mysql
+
+### How to Setup
+
+1. Create Mysql DB (see appsettings.json for details and modify any different data)
+2. Run update-database command in Nuget package console for building tables
