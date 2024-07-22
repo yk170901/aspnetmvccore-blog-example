@@ -2,7 +2,7 @@
 @model List<Project.Models.Domain.BlogPost>
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Hompage";
 }
 
 <div class="container col-xxl-8 px-4 py-5">
@@ -54,7 +54,9 @@
 
                         <p class="mb-4">@blogPost.ShortDescription</p>
                         
-                        <a class="btn btn-dark" href="">Read More</a>
+                        <a class="btn btn-dark"
+                            asp-area="" asp-controller="Blog" asp-action="Index" asp-route-urlHandle="@blogPost.UrlHandle">
+                        Read More</a>
                     </div>
                 }
             }

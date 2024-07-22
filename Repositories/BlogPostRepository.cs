@@ -46,6 +46,12 @@ namespace Project.Repositories
             return await _blogDbContext.BlogPosts.Include(x => x.Tags).FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task<BlogPost?> GetAsync(string urlHandle)
+        {
+            return await _blogDbContext.BlogPosts.Include(x => x.Tags)
+                .FirstOrDefaultAsync(x => x.UrlHandle == urlHandle);
+        }
+
         public async Task<BlogPost?> UpdateAsync(BlogPost blogPost)
         {
             // when not including tags Include(x => x.Tags), an error that says 'duplicate primary key' occurs
