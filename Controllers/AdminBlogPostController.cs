@@ -67,5 +67,14 @@ namespace Project.Controllers
             return RedirectToAction("Add");
             //return View("Add");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> List()
+        {
+            IEnumerable<BlogPost> blogPosts = await _blogPostRepository.GetAllAsync();
+
+            return View(blogPosts);
+        }
+
     }
 }

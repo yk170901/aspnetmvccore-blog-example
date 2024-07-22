@@ -1,4 +1,5 @@
-﻿using Project.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Project.Data;
 using Project.Models.Domain;
 
 namespace Project.Repositories
@@ -25,13 +26,14 @@ namespace Project.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<BlogPost>> GetAllAsync()
+        public async Task<IEnumerable<BlogPost>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _blogDbContext.BlogPosts.Include(x => x.Tags).ToListAsync();
         }
 
-        public Task<BlogPost?> GetAsync(Guid id)
+        public async Task<BlogPost?> GetAsync(Guid id)
         {
+            BlogPost? blogPost = await _blogDbContext.BlogPosts.FirstOrDefaultAsync(x => x.Id == id);
             throw new NotImplementedException();
         }
 
