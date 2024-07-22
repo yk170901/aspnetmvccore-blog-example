@@ -148,8 +148,23 @@ namespace Project.Controllers
 
             if(updatedBlogPost != null)
             {
+                //return RedirectToAction("Edit");
+                return RedirectToAction("List");
+            }
+            else
+            {
                 return RedirectToAction("Edit");
-                //return RedirectToAction("List");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(EditBlogPostRequest reqValue)
+        {
+            BlogPost? affectedBlogPost = await _blogPostRepository.DeleteAsync(reqValue.Id);
+
+            if (affectedBlogPost != null)
+            {
+                return RedirectToAction("List");
             }
             else
             {
