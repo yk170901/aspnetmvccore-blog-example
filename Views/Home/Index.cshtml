@@ -1,5 +1,5 @@
 ﻿@using Project.Models.Domain
-@model List<Project.Models.Domain.BlogPost>
+@model Project.Models.ViewModels.HomeViewModel
 
 @{
     ViewData["Title"] = "Hompage";
@@ -25,13 +25,28 @@
     </div>
 </div>
 
+<div class="container mb-3">
+    <div class="row justify-content-center">
+        <div class="col-6 d-flex">
+            @if(Model != null
+                && Model.Tags.Any())
+            {
+                @foreach (Tag tag in Model.Tags)
+                {
+                    <span class="badge bg-dark me-1">@tag.Name</span>
+                }
+            }
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-6">
             @if (Model != null
-            && Model.Any())
+            && Model.BlogPosts.Any())
             {
-                foreach(BlogPost blogPost in Model)
+                foreach(BlogPost blogPost in Model.BlogPosts)
                 {
                     <div class="mb-5 bg-light box-shadow p-5">
                         <img src="@blogPost.FeaturedImageUrl" alt="@blogPost.Heading"
