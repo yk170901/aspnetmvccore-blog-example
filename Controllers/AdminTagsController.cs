@@ -89,7 +89,7 @@ namespace Project.Controllers
         }
         #endregion
 
-        // not httpput?
+        // TODO: not httpput?
         [HttpPost]
         public IActionResult Edit(EditTagRequest reqValue)
         {
@@ -118,8 +118,21 @@ namespace Project.Controllers
             return RedirectToAction("Edit", reqValue.Id); // back to HttpGet Edit(Guid id) page
         }
 
+        // TODO : not httpdelete?
+        [HttpPost]
+        public IActionResult Delete(EditTagRequest reqValue) // Guid id
+        {
+            Tag? tag = _blogDbContext.Tags.Find(reqValue.Id);
 
-        // public IActionResult Delete(Guid id) { }
+            if(tag != null)
+            {
+                _blogDbContext.Tags.Remove(tag);
+                _blogDbContext.SaveChanges();
+             
+                return RedirectToAction("List");
+            }
 
+            return RedirectToAction("Edit", reqValue.Id);
+        }
     }
 }
