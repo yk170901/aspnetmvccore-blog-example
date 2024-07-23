@@ -52,9 +52,14 @@ namespace Project.Controllers
 
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl)
         {
-            return View();
+            LoginViewModel model = new LoginViewModel()
+            {
+                ReturnUrl = returnUrl
+            };
+
+            return View(model);
         }
 
         [HttpPost]
@@ -65,7 +70,14 @@ namespace Project.Controllers
             if (signInResult != null
                 && signInResult.Succeeded)
             {
-                return RedirectToAction("Index", "Home");
+                if(!string.IsNullOrEmpty(loginInfo.ReturnUrl))
+                {
+                    return Redirect(loginInfo.ReturnUrl);
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Home");
+                }
             }
 
             return View();
