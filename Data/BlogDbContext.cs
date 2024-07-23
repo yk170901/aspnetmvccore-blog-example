@@ -6,7 +6,7 @@ namespace Project.Data
     public class BlogDbContext : DbContext
     {
         // program.cs
-        public BlogDbContext(DbContextOptions options) : base(options)
+        public BlogDbContext(DbContextOptions<BlogDbContext> options) : base(options)
         {
 
         }
