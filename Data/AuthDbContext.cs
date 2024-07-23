@@ -14,12 +14,11 @@ namespace Project.Data
         {
             base.OnModelCreating(builder);
 
-            // cannot use c# interactive for getting guid there
-            string adminRoleId = Guid.NewGuid().ToString();
-            string superAdminRoleId = Guid.NewGuid().ToString();
-            string userRoldId = Guid.NewGuid().ToString();
-
             // Seed Roles (User, Admin, SuperAdmin)
+            string adminRoleId = "7c21344a-c999-4f4e-8735-20b2a722837b";
+            string superAdminRoleId = "ea25e605-1400-47fe-9ebd-c81bcffce3e0";
+            string userRoleId = "0ee3ea4a-9808-4954-b3d5-48c32a787e04";
+
             List<IdentityRole> roles = new List<IdentityRole>()
             {
                 new IdentityRole
@@ -40,8 +39,8 @@ namespace Project.Data
                 {
                     Name = "User",
                     NormalizedName = "User",
-                    Id = userRoldId,
-                    ConcurrencyStamp = userRoldId
+                    Id = userRoleId,
+                    ConcurrencyStamp = userRoleId
                 }
             };
 
@@ -49,14 +48,14 @@ namespace Project.Data
             builder.Entity<IdentityRole>().HasData(roles);
 
             // Seed SuperAdminUser
-            string superAdminId = Guid.NewGuid().ToString();
+            string superAdminId = "d7fda04d-96c5-40c7-9215-73edec6faee9";
             IdentityUser superAdminUser = new IdentityUser()
             {
                 UserName = "superadminname",
                 Email = "superadmin@blog.com",
                 NormalizedUserName = "superadminname".ToUpper(),
                 NormalizedEmail = "superadmin@blog.com".ToUpper(),
-                Id = adminRoleId
+                Id = superAdminId
             };
 
             superAdminUser.PasswordHash = new PasswordHasher<IdentityUser>()
@@ -81,7 +80,7 @@ namespace Project.Data
 
                 new IdentityUserRole<string>
                 {
-                    RoleId = userRoldId,
+                    RoleId = userRoleId,
                     UserId = superAdminId
                 }
             };
